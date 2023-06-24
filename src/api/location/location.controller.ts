@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { LocationService } from './location.service';
+import { CityParam, CityResult, CountryParam, CountryResult, SearchResult, StateParam, StateResult } from 'src/utils/types';
 
 @Controller('/')
 export class LocationController {
@@ -8,59 +9,54 @@ export class LocationController {
     // Get Search Result
 
     @Get('/')
-    getAll(@Query('id') id: number, @Query('s') search: string): Object[] {
+    getAll(@Query('id') id: number, @Query('s') search: string): Promise<SearchResult[]> {
 
-        console.log('id', id)
-        console.log('search', search)
-
-        let param = {
+        const param: CountryParam = {
             id: id ? id : 0,
-            search: search ? search : '',
+            name: search ? search : '',
         }
 
-        return this.locationService.getAllData({ param });
+        return this.locationService.getAllData(param);
     }
 
     // Get Country
 
     @Get('/country')
-    getCountry(@Query('country') countryId: number, @Query('s') search: string): Object[] {
+    getCountry(@Query('country') countryId: number, @Query('s') search: string): Promise<CountryResult[]> {
 
-        console.log('countryId', countryId)
-        console.log('search', search)
-
-        let param = {
-            countryId: countryId ? countryId : 0,
-            search: search ? search : '',
+        const param: CountryParam = {
+            id: countryId ? countryId : 0,
+            name: search ? search : '',
         }
-
-        return this.locationService.getCountryData({ param });
+        return this.locationService.getCountryData(param);
     }
 
     // Get Country
 
     @Get('/state')
-    getState(@Query('country') countryId: number, @Query('s') search: string): Object[] {
+    getState(@Query('state') stateId: number, @Query('s') search: string, @Query('country') countryId: number,): Promise<StateResult[]> {
 
-        let param = {
-            countryId: countryId ? countryId : 0,
-            search: search ? search : '',
+        const param: StateParam = {
+            id: stateId ? stateId : 0,
+            name: search ? search : '',
+            countryId: countryId ? countryId : 0
         }
 
-        return this.locationService.getStateData({ param });
+        return this.locationService.getStateData(param);
     }
 
     // Get Country
 
     @Get('/city')
-    getCity(@Query('state') stateId: number, @Query('s') search: string): Object[] {
+    getCity(@Query('city') cityId: number, @Query('s') search: string, @Query('state') stateId: number): Promise<CityResult[]> {
 
-        let param = {
-            stateId: stateId ? stateId : 0,
-            search: search ? search : '',
+        const param: CityParam = {
+            id: cityId ? cityId : 0,
+            name: search ? search : '',
+            stateId: stateId ? stateId : 0
         }
 
-        return this.locationService.getCityData({ param });
+        return this.locationService.getCityData(param);
     }
 
 }
